@@ -15,8 +15,8 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".LinesViewActivity">
-        </activity>
+        <activity android:name=".LinesViewActivity" />
+        <activity android:name=".Chooser.FileChooser" />
     </application>
 
 </manifest>
