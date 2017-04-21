@@ -1,22 +1,24 @@
 package com.fei.textsearch
 
-import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
-import android.view.View
-import android.content.Intent
-import com.fei.textsearch.Chooser.FileChooser
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
-import android.widget.SimpleAdapter
-import com.fei.textsearch.Text.FileScanResult
-import kotlinx.android.synthetic.main.activity_main.*
-import android.text.style.BackgroundColorSpan
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.text.SpannableString
+import android.text.style.BackgroundColorSpan
+import android.view.View
+import android.widget.AdapterView
+import android.widget.SimpleAdapter
+import com.fei.textsearch.Chooser.FileChooser
+import com.fei.textsearch.Text.FileScanResult
 import com.fei.textsearch.Text.Manager
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
+    val dataCache: ArrayList<FileScanResult> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +33,13 @@ class MainActivity : AppCompatActivity() {
                 arrayOf("ResultCount", "ResultTimes", "ResultFile"),
                 intArrayOf(R.id.ResultCount, R.id.ResultTimes, R.id.ResultFile))
         this.listViewResult.adapter = adapter
+        this.listViewResult.setOnItemClickListener { adapterView: AdapterView<*>, view1: View, position: Int, id: Long ->
+            var obj = this.dataCache[position]
+            val intent = Intent(this@MainActivity, LinesViewActivity::class.java)
+            intent.putExtra("path", obj.file)
+            intent.putExtra("words", this.txtSearch.text.toString())
+            startActivity(intent)
+        }
 
         val str = SpannableString("Highlighted. Not highlighted.")
         str.setSpan(BackgroundColorSpan(Color.YELLOW), 0, 11, 0)
@@ -75,14 +84,25 @@ class MainActivity : AppCompatActivity() {
 
     fun startSearch(view: View) {
         var manager = Manager("/sdcard/Download") //this.textViewPath.text.toString()
-        manager.start(arrayOf("project", "def"))
+        var words = this.txtSearch.text.split(" ").toTypedArray()
+        println("search word")
+        println(words)
+        manager.start(words)
         refreshListView(manager.getResult())
     }
 
     private fun refreshListView(list: List<FileScanResult>) {
+        dataCache.clear()
+
         val data = ArrayList<Map<String, Any>>()
         var map: MutableMap<String, Any>
         for (scanResult in list) {
+            if (scanResult.count < 1) {
+                continue
+            }
+
+            dataCache.add(scanResult)
+
             map = HashMap()
             map.put("ResultCount", scanResult.count)
             map.put("ResultTimes", scanResult.times)
@@ -90,7 +110,7 @@ class MainActivity : AppCompatActivity() {
             data.add(map)
         }
 
-        var adapter = SimpleAdapter(this, getData(), R.layout.match_result_item,
+        var adapter = SimpleAdapter(this, data, R.layout.match_result_item,
                 arrayOf("ResultCount", "ResultTimes", "ResultFile"),
                 intArrayOf(R.id.ResultCount, R.id.ResultTimes, R.id.ResultFile))
         this.listViewResult.adapter = adapter

@@ -8,9 +8,6 @@ import java.io.Serializable
 
 class FileScanResult(val count: Int, val times: Int, val file: String) : Serializable {
     var list: ArrayList<TextSegment> = arrayListOf()
-    fun list(): Iterable<TextSegment> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
     fun addSegments(list: ArrayList<TextSegment>) {
         this.list = list

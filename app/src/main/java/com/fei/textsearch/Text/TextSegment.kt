@@ -9,7 +9,7 @@ import java.io.Serializable
 class TextSegment(val path: String, start: Int, val keyworkd: String, private val allText: String) : Serializable {
     var index: Pair<Int, Int> = Pair(0, 0)
     var percent: Double = 0.0
-    private var position: Pair<Int, Int> = Pair(0, 0)
+    var position: Pair<Int, Int> = Pair(0, 0)
 
     init {
         index = Pair(start, start + keyworkd.length)
