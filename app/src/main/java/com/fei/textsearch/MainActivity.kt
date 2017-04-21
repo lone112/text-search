@@ -6,10 +6,14 @@ import android.view.View
 import android.content.Intent
 import com.fei.textsearch.Chooser.FileChooser
 import android.app.Activity
-import android.widget.ArrayAdapter
+import android.graphics.Color
 import android.widget.SimpleAdapter
 import com.fei.textsearch.Text.FileScanResult
 import kotlinx.android.synthetic.main.activity_main.*
+import android.text.style.BackgroundColorSpan
+import android.text.SpannableString
+import com.fei.textsearch.Text.Manager
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,6 +31,10 @@ class MainActivity : AppCompatActivity() {
                 arrayOf("ResultCount", "ResultTimes", "ResultFile"),
                 intArrayOf(R.id.ResultCount, R.id.ResultTimes, R.id.ResultFile))
         this.listViewResult.adapter = adapter
+
+        val str = SpannableString("Highlighted. Not highlighted.")
+        str.setSpan(BackgroundColorSpan(Color.YELLOW), 0, 11, 0)
+        this.labelTitle.text = str
     }
 
     private fun getData(): ArrayList<Map<String, Any>> {
@@ -66,7 +74,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun startSearch() {
+        var manager = Manager(this.textViewPath.text.toString())
+        manager.start(arrayOf("abc", "def"))
+        refreshListView(manager.getResult())
+    }
 
+    private fun refreshListView(list: List<FileScanResult>) {
+        val data = ArrayList<Map<String, Any>>()
+        var map: MutableMap<String, Any>
+        for (scanResult in list) {
+            map = HashMap()
+            map.put("ResultCount", scanResult.count)
+            map.put("ResultTimes", scanResult.times)
+            map.put("ResultFile", scanResult.file)
+            data.add(map)
+        }
+
+        var adapter = SimpleAdapter(this, getData(), R.layout.match_result_item,
+                arrayOf("ResultCount", "ResultTimes", "ResultFile"),
+                intArrayOf(R.id.ResultCount, R.id.ResultTimes, R.id.ResultFile))
+        this.listViewResult.adapter = adapter
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

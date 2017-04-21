@@ -1,0 +1,5 @@
+Rafał Borowiec is an IT specialist specializing in software development, software testing and quality assurance, project management, and team leadership.
+
+He currently holds a position of a Development Manager at Goyello, where he is mainly responsible for building and managing teams of professional developers and testers.
+
+He believes in an Agile project management and is a big fan of technology, especially technology that is Java related (but not limited to it). He likes sharing knowledge about software development and practices through this blog and Twitter (@kolorobot).
