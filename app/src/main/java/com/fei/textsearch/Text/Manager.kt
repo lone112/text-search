@@ -14,7 +14,7 @@ class Manager(val root: String) {
 
     fun start(keywords: Array<String>) {
         for (path in listMatchFile()) {
-            val scanner = TextFileScanner(keywords)
+            val scanner = TextFileScanner(path, keywords)
             val task = scanner.execute(path).get()
             list.add(task)
         }

@@ -8,9 +8,9 @@ import java.io.FileInputStream
  * Created by fei on 4/21/2017.
  */
 
-class TextFileScanner(val keywords: Array<String>) : AsyncTask<String, Int, FileScanResult>() {
+class TextFileScanner(val path: String, val keywords: Array<String>) : AsyncTask<String, Int, FileScanResult>() {
     override fun doInBackground(vararg p0: String?): FileScanResult {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return run(path)
     }
 
     fun run(file: String): FileScanResult {
