@@ -8,7 +8,6 @@ import java.util.List;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -32,9 +31,9 @@ public class FileChooser extends ListActivity {
     private void fill(File f) {
         File[] dirs = f.listFiles();
         this.setTitle("Current Dir: " + f.getName());
-        List<Option> dir = new ArrayList<Option>();
+        List<Option> dir = new ArrayList<>();
         dir.add(0, new Option("..Done", "done", f.getParent()));
-        List<Option> fls = new ArrayList<Option>();
+        List<Option> fls = new ArrayList<>();
         try {
             for (File ff : dirs) {
                 if (ff.isDirectory())
