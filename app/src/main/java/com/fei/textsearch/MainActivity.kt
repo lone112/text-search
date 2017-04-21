@@ -73,8 +73,8 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, 1)
     }
 
-    fun startSearch() {
-        var manager = Manager(this.textViewPath.text.toString())
+    fun startSearch(view: View) {
+        var manager = Manager("/sdcard/Download") //this.textViewPath.text.toString()
         manager.start(arrayOf("abc", "def"))
         refreshListView(manager.getResult())
     }

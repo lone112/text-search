@@ -7,6 +7,8 @@ import android.support.test.runner.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.net.URL;
+
 import static org.junit.Assert.*;
 
 /**
