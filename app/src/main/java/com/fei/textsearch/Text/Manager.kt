@@ -21,14 +21,12 @@ class Manager(val root: String) {
     }
 
     fun listMatchFile(): Iterable<String> {
-        var matchList = ArrayList<String>()
         val allTxtFiles = ArrayList<File>()
         listf(this.root, allTxtFiles)
-        allTxtFiles
+        return allTxtFiles
                 .filter { it.extension.toLowerCase().endsWith("txt") }
-                .mapTo(matchList) { it.absolutePath }
-
-        return matchList
+                .map { it.absolutePath }
+                .toList()
     }
 
 

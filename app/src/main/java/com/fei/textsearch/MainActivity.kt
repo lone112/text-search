@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun startSearch(view: View) {
-        var manager = Manager("/sdcard/Download") //this.textViewPath.text.toString()
+        var manager = Manager(this.textViewPath.text.toString())
         var words = this.txtSearch.text.split(" ").toTypedArray()
         println("search word")
         println(words)
