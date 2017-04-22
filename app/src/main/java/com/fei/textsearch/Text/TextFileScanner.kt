@@ -17,9 +17,9 @@ class TextFileScanner(val keywords: Array<String>, val includeSegment: Boolean) 
 
         val allText = readWholeFile(file)
 
-        var ind: Int = 0
 
         for (kw in keywords) {
+            var ind: Int = 0
             ind = allText.indexOf(kw)
             while (ind != -1) {
                 if (map.containsKey(kw)) {

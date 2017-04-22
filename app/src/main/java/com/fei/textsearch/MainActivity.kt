@@ -127,7 +127,7 @@ class MainActivity : AppCompatActivity() {
         dataCache.clear()
         list
                 .filter { it.count > 0 }
-                .sortedBy { it.count }
+                .sortedByDescending { it.count }
                 .mapTo(dataCache) { it }
         val data = ArrayList<Map<String, Any>>()
         for (scanResult in dataCache) {
