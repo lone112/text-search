@@ -13,6 +13,7 @@ import android.widget.SimpleAdapter
 import com.fei.textsearch.Chooser.FileChooser
 import com.fei.textsearch.Text.FileScanResult
 import com.fei.textsearch.Text.Manager
+import com.fei.textsearch.Text.ScanListener
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -34,11 +35,14 @@ class MainActivity : AppCompatActivity() {
                 intArrayOf(R.id.ResultCount, R.id.ResultTimes, R.id.ResultFile))
         this.listViewResult.adapter = adapter
         this.listViewResult.setOnItemClickListener { adapterView: AdapterView<*>, view1: View, position: Int, id: Long ->
-            var obj = this.dataCache[position]
-            val intent = Intent(this@MainActivity, LinesViewActivity::class.java)
-            intent.putExtra("path", obj.file)
-            intent.putExtra("words", this.txtSearch.text.toString())
-            startActivity(intent)
+            if (!this.dataCache.isEmpty()) {
+                var obj = this.dataCache[position]
+                val intent = Intent(this@MainActivity, LinesViewActivity::class.java)
+                intent.putExtra("path", obj.file)
+                intent.putExtra("words", this.txtSearch.text.toString())
+                startActivity(intent)
+            }
+
         }
 
         val str = SpannableString("Highlighted. Not highlighted.")
@@ -83,26 +87,51 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun startSearch(view: View) {
-        var manager = Manager(this.textViewPath.text.toString())
+        if (this.txtSearch.text.toString() == "Search Text") {
+            this.txtSearch.selectAll()
+            return
+        }
+
+        if (this.textViewPath.text.toString() == "Pick folder or file") {
+            this.textViewPath.performClick()
+            return
+        }
+
+        var btn = this.btnSearch
+        this.btnSearch.isEnabled = false
+        this.btnSearch.text = "..."
+
         var words = this.txtSearch.text.split(" ").toTypedArray()
+        var manager = Manager(this.textViewPath.text.toString())
+        manager.setScanListener(object : ScanListener {
+            override fun updateStatus(status: String) {
+                textScanCount.text = status
+                println(status)
+            }
+
+            override fun completed() {
+                println("-------------scan done---------------")
+                refreshListView(manager.getResult())
+                btn.isEnabled = true
+                btn.text = "Search"
+            }
+        })
+
+
         println("search word")
         println(words)
-        manager.start(words)
-        refreshListView(manager.getResult())
+        manager.execute(words)
     }
 
     private fun refreshListView(list: List<FileScanResult>) {
         dataCache.clear()
-
+        list
+                .filter { it.count > 0 }
+                .sortedBy { it.count }
+                .mapTo(dataCache) { it }
         val data = ArrayList<Map<String, Any>>()
-        var map: MutableMap<String, Any>
-        for (scanResult in list) {
-            if (scanResult.count < 1) {
-                continue
-            }
-
-            dataCache.add(scanResult)
-
+        for (scanResult in dataCache) {
+            var map: MutableMap<String, Any>
             map = HashMap()
             map.put("ResultCount", scanResult.count)
             map.put("ResultTimes", scanResult.times)

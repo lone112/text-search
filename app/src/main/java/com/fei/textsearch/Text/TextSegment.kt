@@ -15,7 +15,7 @@ class TextSegment(val path: String, start: Int, val keyworkd: String, private va
         index = Pair(start, start + keyworkd.length)
         percent = start * 100.0 / allText.length
 
-        val step = 20
+        val step = 40
 
         var pStart: Int = start - step
         if (pStart < 0) {

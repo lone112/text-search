@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.fei.textsearch.MainActivity">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/activity_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                tools:context="com.fei.textsearch.MainActivity">
 
     <GridLayout
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:columnCount="2"
-    >
+        >
 
         <EditText
             android:layout_width="456dp"
@@ -27,7 +27,7 @@
             android:ems="10"
             android:id="@+id/txtSearch"
             android:layout_row="1"
-            android:layout_column="0" />
+            android:layout_column="0"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -52,15 +52,27 @@
             android:layout_columnSpan="2"
             android:onClick="pickFolder"
             android:textSize="18sp"
-            android:textStyle="normal|bold" />
+            android:textStyle="normal|bold"/>
+
+        <TextView
+            android:text="Scan: 25"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_columnSpan="2"
+            android:id="@+id/textScanCount"
+            android:textAlignment="viewEnd"
+            android:layout_gravity="end"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            />
 
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_row="3"
+            android:layout_height="wrap_content"
             android:layout_column="0"
             android:layout_columnSpan="2"
             android:id="@+id/listViewResult"/>
+
         <Button
             android:text="Search"
             android:layout_width="82dp"
@@ -68,6 +80,6 @@
             android:id="@+id/btnSearch"
             android:layout_row="1"
             android:layout_column="1"
-            android:onClick="startSearch" />
+            android:onClick="startSearch"/>
     </GridLayout>
 </RelativeLayout>

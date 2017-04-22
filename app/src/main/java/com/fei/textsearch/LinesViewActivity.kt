@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.text.SpannableStringBuilder
 import android.text.style.BackgroundColorSpan
 import android.view.ViewGroup.LayoutParams
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.fei.textsearch.Text.TextFileScanner
 import com.fei.textsearch.Text.TextSegment
@@ -26,15 +27,15 @@ class LinesViewActivity : AppCompatActivity() {
         println(path)
         println(wordStr)
         var words = wordStr.split(" ").toTypedArray()
-        var scanner = TextFileScanner(path, words)
-        var result = scanner.execute(path).get()
+        var scanner = TextFileScanner(words, true)
+        var result = scanner.run(path)
         for (segment in result.getSegments()) {
             append(segment)
         }
     }
 
     fun append(segment: TextSegment) {
-        val str = SpannableStringBuilder (segment.getSplitText())
+        val str = SpannableStringBuilder(segment.getSplitText())
         val start = segment.index.first - segment.position.first
         val end = start + segment.index.second - segment.index.first
         str.setSpan(BackgroundColorSpan(Color.YELLOW), start, end, 0)
@@ -45,7 +46,9 @@ class LinesViewActivity : AppCompatActivity() {
 
         val textView = TextView(this)
         textView.text = str
-        textView.layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        val layout = LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        layout.setMargins(0, 0, 0, 10)
+        textView.layoutParams = layout
         textView.setOnClickListener {
             println("click segment")
             val file = File(segment.path)

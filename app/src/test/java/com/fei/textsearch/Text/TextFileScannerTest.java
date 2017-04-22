@@ -24,7 +24,7 @@ public class TextFileScannerTest {
         kw[0] = "management";
         kw[1] = "technology";
         kw[2] = "especially";
-        TextFileScanner scanner = new TextFileScanner(kw);
+        TextFileScanner scanner = new TextFileScanner(kw, true);
         FileScanResult result = scanner.run(filePath);
 
         FileInputStream fis = new FileInputStream(file);
@@ -58,7 +58,7 @@ public class TextFileScannerTest {
         kw[0] = "management";
         kw[1] = "technology";
         kw[2] = "especially";
-        TextFileScanner scanner = new TextFileScanner(kw);
+        TextFileScanner scanner = new TextFileScanner(kw, true);
         FileScanResult result = scanner.run(filePath);
         System.out.println("find key word " + result.getCount());
         System.out.println("find times " + result.getTimes());

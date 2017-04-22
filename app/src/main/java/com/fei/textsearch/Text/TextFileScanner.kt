@@ -1,6 +1,5 @@
 package com.fei.textsearch.Text
 
-import android.os.AsyncTask
 import java.io.File
 import java.io.FileInputStream
 
@@ -8,10 +7,7 @@ import java.io.FileInputStream
  * Created by fei on 4/21/2017.
  */
 
-class TextFileScanner(val path: String, val keywords: Array<String>) : AsyncTask<String, Int, FileScanResult>() {
-    override fun doInBackground(vararg p0: String?): FileScanResult {
-        return run(path)
-    }
+class TextFileScanner(val keywords: Array<String>, val includeSegment: Boolean) {
 
     fun run(file: String): FileScanResult {
 
@@ -31,8 +27,10 @@ class TextFileScanner(val path: String, val keywords: Array<String>) : AsyncTask
                 } else {
                     map.put(kw, 1)
                 }
-                val segment = TextSegment(file, ind, kw, allText)
-                list.add(segment)
+                if (includeSegment) {
+                    val segment = TextSegment(file, ind, kw, allText)
+                    list.add(segment)
+                }
                 ind = allText.indexOf(kw, ind + 1)
             }
         }
@@ -52,7 +50,7 @@ class TextFileScanner(val path: String, val keywords: Array<String>) : AsyncTask
             fis.close()
             val str = String(data, charset("GB2312"))
             return str
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             return ""
         }
     }
