@@ -21,15 +21,11 @@ class MainActivity : AppCompatActivity() {
 
     val dataCache: ArrayList<FileScanResult> = arrayListOf()
 
+    var manager: Manager = Manager("")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        println("kotlin code run...")
-        var list = ArrayList<FileScanResult>()
-        list.add(FileScanResult(5, 12, "/sdcard/Download/123.txt"))
-        list.add(FileScanResult(1, 1, "/sdcard/Download/124.txt"))
-        list.add(FileScanResult(12, 12, "/sdcard/Download/125.txt"))
-        list.add(FileScanResult(1, 12, "/sdcard/Download/1236.txt"))
         var adapter = SimpleAdapter(this, getData(), R.layout.match_result_item,
                 arrayOf("ResultCount", "ResultTimes", "ResultFile"),
                 intArrayOf(R.id.ResultCount, R.id.ResultTimes, R.id.ResultFile))
@@ -56,25 +52,25 @@ class MainActivity : AppCompatActivity() {
         var map: MutableMap<String, Any> = HashMap()
         map.put("ResultCount", 1)
         map.put("ResultTimes", 12)
-        map.put("ResultFile", "/sdcard/Download/1236.txt")
+        map.put("ResultFile", "1 Type some key words")
         list.add(map)
 
         map = HashMap()
         map.put("ResultCount", 1)
         map.put("ResultTimes", 1)
-        map.put("ResultFile", "/sdcard/Download/1236.txt")
+        map.put("ResultFile", "2 Select folder")
         list.add(map)
 
         map = HashMap()
         map.put("ResultCount", 11)
         map.put("ResultTimes", 12)
-        map.put("ResultFile", "/sdcard/Download/1236.txt")
+        map.put("ResultFile", "3 Click Search button")
         list.add(map)
 
         map = HashMap()
         map.put("ResultCount", 5)
         map.put("ResultTimes", 5)
-        map.put("ResultFile", "/sdcard/Download/1236.txt")
+        map.put("ResultFile", "4 Wait ...")
         list.add(map)
 
         return list
@@ -87,7 +83,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun startSearch(view: View) {
-        if (this.txtSearch.text.toString() == "Search Text") {
+        val searchText = this.txtSearch.text.toString().trim()
+        if (searchText == "Search Text") {
+            this.txtSearch.selectAll()
+            return
+        }
+
+        if (searchText.isEmpty()) {
             this.txtSearch.selectAll()
             return
         }
@@ -101,8 +103,18 @@ class MainActivity : AppCompatActivity() {
         this.btnSearch.isEnabled = false
         this.btnSearch.text = "..."
 
-        var words = this.txtSearch.text.split(" ").toTypedArray()
-        var manager = Manager(this.textViewPath.text.toString())
+
+        var words = searchText.split(" ").toTypedArray()
+        val path = this.textViewPath.text.toString()
+
+        val tmp = Manager(path)
+        if (path.startsWith(this.manager.root)) {
+            println("use previous file list")
+            tmp.listFilesCache = this.manager.listFilesCache
+        }
+
+        this.manager = tmp
+
         manager.setScanListener(object : ScanListener {
             override fun updateStatus(status: String) {
                 textScanCount.text = status
@@ -139,7 +151,7 @@ class MainActivity : AppCompatActivity() {
             data.add(map)
         }
 
-        var adapter = SimpleAdapter(this, data, R.layout.match_result_item,
+        val adapter = SimpleAdapter(this, data, R.layout.match_result_item,
                 arrayOf("ResultCount", "ResultTimes", "ResultFile"),
                 intArrayOf(R.id.ResultCount, R.id.ResultTimes, R.id.ResultFile))
         this.listViewResult.adapter = adapter

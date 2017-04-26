@@ -11,28 +11,33 @@ import java.util.*
 class Manager(val root: String) : AsyncTask<Array<String>, Int, List<FileScanResult>>() {
     private var listener: ScanListener? = null
 
-    private var list: ArrayList<FileScanResult> = arrayListOf()
+    private var resultList: ArrayList<FileScanResult> = arrayListOf()
 
     private var matchFilesCount = 0
 
+    var listFilesCache: List<String>? = null
+
     override fun doInBackground(vararg params: Array<String>?): List<FileScanResult> {
-        var keywords = params[0]
+        val keywords = params[0]
         start(keywords!!)
 
-        return this.list
+        return this.resultList
     }
 
 
     fun start(keywords: Array<String>) {
-        this.list.clear()
+        this.resultList.clear()
 
-        var files = listMatchFile()
-        matchFilesCount = files.size
-        for (path in files) {
+        if (listFilesCache == null) {
+            this.listFilesCache = listMatchFile()
+        }
+
+        matchFilesCount = this.listFilesCache!!.size
+        for (path in this.listFilesCache!!) {
             val scanner = TextFileScanner(keywords, false)
             val task = scanner.run(path)
-            list.add(task)
-            publishProgress(list.size)
+            resultList.add(task)
+            publishProgress(resultList.size)
         }
     }
 
@@ -47,7 +52,7 @@ class Manager(val root: String) : AsyncTask<Array<String>, Int, List<FileScanRes
 
 
     fun getResult(): List<FileScanResult> {
-        return this.list
+        return this.resultList
     }
 
     private fun listf(directoryName: String, files: ArrayList<File>) {
@@ -78,10 +83,10 @@ class Manager(val root: String) : AsyncTask<Array<String>, Int, List<FileScanRes
         super.onProgressUpdate(*values)
         var tmp = this.listener
         if (tmp != null) {
-            if (this.list.size == 0) {
+            if (this.resultList.size == 0) {
                 tmp.updateStatus("Searching...")
             } else {
-                tmp.updateStatus(String.format("Scan files %s / %s", this.list.size, this.matchFilesCount))
+                tmp.updateStatus(String.format("Scan files %s / %s", this.resultList.size, this.matchFilesCount))
             }
         }
     }
