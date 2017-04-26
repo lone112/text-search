@@ -49,10 +49,11 @@ class LinesViewActivity : AppCompatActivity() {
         val layout = LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         layout.setMargins(0, 0, 0, 10)
         textView.layoutParams = layout
+        textView.setPadding(0, 0, 0, 15)
         textView.setOnClickListener {
             println("click segment")
             val file = File(segment.path)
-            var uri = Uri.fromFile(file)
+            val uri = Uri.fromFile(file)
             val mime = "text/*"
             val intent = Intent(Intent.ACTION_VIEW)
             intent.setDataAndType(uri, mime)

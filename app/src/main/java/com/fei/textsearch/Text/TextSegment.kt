@@ -22,7 +22,7 @@ class TextSegment(val path: String, start: Int, val keyworkd: String, private va
             pStart = 0
         }
 
-        var pEnd = start + keyworkd.length + 20
+        var pEnd = start + keyworkd.length + step
         if (pEnd > allText.length) {
             pEnd = allText.length
         }
