@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
         val tmp = Manager(path)
         if (path.startsWith(this.manager.root)) {
             println("use previous file list")
-            tmp.listFilesCache = this.manager.listFilesCache
+            tmp.searchFilesCache = this.manager.searchFilesCache
         }
 
         this.manager = tmp
@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity() {
             map = HashMap()
             map.put("ResultCount", scanResult.count)
             map.put("ResultTimes", scanResult.times)
-            map.put("ResultFile", scanResult.file)
+            map.put("ResultFile", scanResult.file.substring(this.manager.root.length + 1, scanResult.file.length))
             data.add(map)
         }
 

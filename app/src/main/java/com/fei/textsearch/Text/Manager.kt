@@ -3,6 +3,8 @@ package com.fei.textsearch.Text
 import android.os.AsyncTask
 import java.io.File
 import java.util.*
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.Executors
 
 /**
  * Created by fei on 4/21/2017.
@@ -11,11 +13,11 @@ import java.util.*
 class Manager(val root: String) : AsyncTask<Array<String>, Int, List<FileScanResult>>() {
     private var listener: ScanListener? = null
 
-    private var resultList: ArrayList<FileScanResult> = arrayListOf()
+    private var resultList: List<FileScanResult> = arrayListOf()
 
-    private var matchFilesCount = 0
+    private var searchFileCount = 0
 
-    var listFilesCache: List<String>? = null
+    var searchFilesCache: List<String> = arrayListOf()
 
     override fun doInBackground(vararg params: Array<String>?): List<FileScanResult> {
         val keywords = params[0]
@@ -26,19 +28,33 @@ class Manager(val root: String) : AsyncTask<Array<String>, Int, List<FileScanRes
 
 
     fun start(keywords: Array<String>) {
-        this.resultList.clear()
-
-        if (listFilesCache == null) {
-            this.listFilesCache = listMatchFile()
+        if (searchFilesCache.isEmpty()) {
+            this.searchFilesCache = listMatchFile()
         }
+        searchFileCount = this.searchFilesCache.size
 
-        matchFilesCount = this.listFilesCache!!.size
-        for (path in this.listFilesCache!!) {
-            val scanner = TextFileScanner(keywords, false)
-            val task = scanner.run(path)
-            resultList.add(task)
-            publishProgress(resultList.size)
+        println("queue size " + searchFileCount)
+        val queue = ArrayBlockingQueue<String>(searchFileCount, false, this.searchFilesCache)
+        val finishedQueue = ArrayBlockingQueue<FileScanResult>(searchFileCount)
+
+        val executor = Executors.newCachedThreadPool()
+        executor.execute(TextFileScannerTask(keywords, false, queue, finishedQueue))
+        executor.execute(TextFileScannerTask(keywords, false, queue, finishedQueue))
+        executor.execute(TextFileScannerTask(keywords, false, queue, finishedQueue))
+        executor.execute(TextFileScannerTask(keywords, false, queue, finishedQueue))
+
+        var previousStatus = 0
+        while (queue.size > 0) {
+
+            if (previousStatus != finishedQueue.size) {
+                println("update progress")
+                previousStatus = finishedQueue.size
+                publishProgress(finishedQueue.size)
+            }
+            Thread.sleep(500)
         }
+        println("scan finished")
+        resultList = finishedQueue.toList()
     }
 
     private fun listMatchFile(): List<String> {
@@ -83,10 +99,10 @@ class Manager(val root: String) : AsyncTask<Array<String>, Int, List<FileScanRes
         super.onProgressUpdate(*values)
         var tmp = this.listener
         if (tmp != null) {
-            if (this.resultList.size == 0) {
+            if (values[0] == 0) {
                 tmp.updateStatus("Searching...")
             } else {
-                tmp.updateStatus(String.format("Scan files %s / %s", this.resultList.size, this.matchFilesCount))
+                tmp.updateStatus(String.format("Scan files %s / %s", values[0], this.searchFileCount))
             }
         }
     }
@@ -95,7 +111,7 @@ class Manager(val root: String) : AsyncTask<Array<String>, Int, List<FileScanRes
         super.onPostExecute(result)
         var tmp = this.listener
         if (tmp != null) {
-            tmp.updateStatus("Completed " + this.matchFilesCount)
+            tmp.updateStatus("Completed " + this.searchFileCount)
             tmp.completed()
         }
     }
