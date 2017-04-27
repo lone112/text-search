@@ -26,12 +26,26 @@ public class FileChooser extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        currentDir = new File("/");
-        if (Environment.getExternalStorageState().
+
+        Bundle tmp = getIntent().getExtras();
+        if (tmp.containsKey("path")) {
+            String path = tmp.getString("path");
+            File pathDir = new File(path);
+            if (pathDir.exists()) {
+                System.out.println("pass path " + path);
+                currentDir = pathDir;
+            }
+        } else if (Environment.getExternalStorageState().
                 equals(Environment.MEDIA_MOUNTED)) {
             System.out.println("sdcard ready");
             currentDir = Environment.getExternalStorageDirectory();
         }
+        
+        if (currentDir == null) {
+            currentDir = new File("/");
+        }
+
+
         fill(currentDir);
     }
 

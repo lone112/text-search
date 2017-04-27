@@ -23,6 +23,8 @@ class MainActivity : AppCompatActivity() {
 
     var manager: Manager = Manager("")
 
+    var previousSelectedItem: View? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -31,6 +33,14 @@ class MainActivity : AppCompatActivity() {
                 intArrayOf(R.id.ResultCount, R.id.ResultTimes, R.id.ResultFile))
         this.listViewResult.adapter = adapter
         this.listViewResult.setOnItemClickListener { adapterView: AdapterView<*>, view1: View, position: Int, id: Long ->
+
+            if (previousSelectedItem != null) {
+                previousSelectedItem!!.setBackgroundColor(Color.LTGRAY)
+            }
+
+            view1.setBackgroundColor(Color.YELLOW)
+            previousSelectedItem = view1
+
             if (!this.dataCache.isEmpty()) {
                 var obj = this.dataCache[position]
                 val intent = Intent(this@MainActivity, LinesViewActivity::class.java)
@@ -77,8 +87,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun pickFolder(view: View) {
-        println("click button")
+        val path = this.textViewPath.text.toString()
         val intent = Intent(this@MainActivity, FileChooser::class.java)
+        intent.putExtra("path", path)
         startActivityForResult(intent, 1)
     }
 
